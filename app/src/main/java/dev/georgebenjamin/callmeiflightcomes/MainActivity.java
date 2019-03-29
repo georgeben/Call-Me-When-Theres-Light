@@ -1,7 +1,10 @@
 package dev.georgebenjamin.callmeiflightcomes;
 
+import android.Manifest;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -59,9 +62,19 @@ public class MainActivity extends AppCompatActivity {
 
                 }else{
                     Toast.makeText(MainActivity.this, "They have brought light", Toast.LENGTH_SHORT).show();
+                    //Make phone call
+                    if(checkForPermission(Manifest.permission.CALL_PHONE)){
+                        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:09060791349")));
+                    }else{
+                        Toast.makeText(MainActivity.this, "Call permission not grated", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             }
         });
+    }
+
+    private boolean checkForPermission(String permission){
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 }
